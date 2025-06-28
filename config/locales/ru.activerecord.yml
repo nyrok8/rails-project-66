@@ -1,0 +1,16 @@
+ru:
+  activerecord:
+    attributes:
+      repository/check:
+          aasm_state/created: Создана
+          aasm_state/running: В процессе
+          aasm_state/finished: Завершена
+          aasm_state/failed: Произошла ошибка
+    
+    errors:
+      models:
+        repository:
+          attributes:
+            github_id:
+              blank: не может быть пустым
+              taken: репозиторий уже добавлен

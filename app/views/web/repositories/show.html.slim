@@ -1,0 +1,46 @@
+.card.px-2
+  .card-body
+    .card-title.border-bottom.mb-4
+      h3.pb-2 = @repository.full_name
+
+    .card-subtitle.border-bottom.mb-4
+      = link_to t('inspect'), repository_checks_path(@repository),
+        data: { turbo_method: :post },
+        class: 'btn btn-sm btn-outline-primary mb-2'
+
+      p
+        strong.me-2 = t('web.repositories.name')
+        = @repository.full_name
+
+      p
+        strong.me-2 = t('web.repositories.language')
+        = @repository.language
+
+      p
+        strong.me-2 = t('created_at')
+        = l @repository.created_at, format: :short
+
+      p
+        strong.me-2 = t('updated_at')
+        = l @repository.updated_at, format: :short
+
+    table.table.table-striped
+      thead
+        tr
+          th №
+          th = t('web.repositories.status')
+          th = t('web.repositories.commit_id')
+          th = t('web.repositories.check_passed')
+          th = t('created_at')
+      tbody
+        - @checks.each do |check|
+          tr
+            td = link_to check.id, repository_check_path(@repository, check)
+            td = check.aasm.human_state
+            td
+              - if check.commit_id.present?
+                = link_to check.commit_id.first(7), "https://github.com/#{@repository.full_name}/tree/#{check.commit_id}",
+                  target: '_blank',
+                  rel: 'noopener'
+            td = check.passed?
+            td = l check.created_at, format: :short

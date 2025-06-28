@@ -1,0 +1,8 @@
+= simple_form_for repository do |f|
+  = f.input :github_id,
+            collection: repos,
+            label_method: :full_name,
+            value_method: :id,
+            input_html: { class: 'form-select' }
+
+  = f.button :submit, class: 'btn btn-primary'

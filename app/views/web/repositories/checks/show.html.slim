@@ -1,0 +1,55 @@
+.card.px-2
+  .card-body
+    .card-title.border-bottom.mb-4
+      h3.pb-2 = t('.title', id: @check.id)
+
+    .card-subtitle.border-bottom.mb-4
+      = link_to t('back'), repository_path(@check.repository),
+        class: 'btn btn-sm btn-outline-primary mb-2'
+
+      p
+        strong.me-2 = t('created_at')
+        = l @check.created_at, format: :short
+
+      p
+        strong.me-2 = t('web.repositories.status')
+        = @check.aasm.human_state
+
+      p
+        strong.me-2 = t('web.repositories.check_passed')
+        = @check.passed?
+
+      p
+        strong.me-2 = t('.errors_count')
+        = @parsed_result.values.flatten.size
+
+      p
+        strong.me-2 = t('web.repositories.commit_id')
+        - if @check.commit_id.present?
+          = link_to @check.commit_id.first(7), "https://github.com/#{@check.repository.full_name}/tree/#{@check.commit_id}",
+            target: '_blank',
+            rel: 'noopener'
+
+    - if @parsed_result.any?
+        table.table
+          thead.table-light
+            tr
+              th = t('.message')
+              th = t('.cop_name')
+              th = t('.line_col')
+          tbody
+            - @parsed_result.each do |file, offenses|
+              tr.table-group-divider
+                td.table-danger[colspan='3']
+                  - if @check.commit_id.present?
+                    = link_to file, "https://github.com/#{@check.repository.full_name}/blob/#{@check.commit_id}/#{file}",
+                      target: '_blank',
+                      rel: 'noopener'
+                  - else
+                    = file
+
+              - offenses.each do |offense|
+                tr
+                  td = offense[:message]
+                  td = offense[:cop_name]
+                  td = offense[:line_col]

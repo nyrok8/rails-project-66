@@ -1,0 +1,6 @@
+one:
+  aasm_state: failed
+  commit_id: 86c521df09a0fcc38925119307051382e0e9d666
+  passed: nil
+  result: {}
+  repository: one

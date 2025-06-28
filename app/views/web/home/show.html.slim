@@ -1,0 +1,7 @@
+.card.px-2.mb-4
+  .card-body
+    h3.mb-4 = t('.title')
+    p = t('.text')
+
+    - unless signed_in?
+      p = t('.hint')

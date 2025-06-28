@@ -1,0 +1,19 @@
+.card.px-2.mb-4
+  .card-body
+    .card-title.border-bottom.mb-4
+      h3.pb-2 = t('.title')
+
+    = link_to t('new'), new_repository_path, class: 'btn btn-sm btn-outline-primary mb-2'
+
+    table.table.table-striped
+      thead
+        tr
+          th = t('web.repositories.name')
+          th = t('web.repositories.language')
+          th = t('.status')
+      tbody
+        - @repositories.each do |repository|
+          tr
+            td = link_to repository.full_name, repository_path(repository)
+            td = repository.language
+            td = repository.checks.last&.passed

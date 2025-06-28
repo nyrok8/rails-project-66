@@ -1,0 +1,9 @@
+one:
+  email: user1@example.com
+  nickname: user1
+  token: 9ea49b946a31b705a0168295a0caa888
+
+two:
+  email: user2@example.com
+  nickname: user2
+  token: 9ea49b946a31b705a0168295a0caa666

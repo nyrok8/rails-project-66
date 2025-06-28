@@ -1,0 +1,6 @@
+.card.px-2
+  .card-body
+    .card-title.border-bottom.mb-4
+      h3.pb-2 = t('.title')
+
+    = render partial: 'form', locals: { repository: @repository, repos: @repos }

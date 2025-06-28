@@ -1,0 +1,29 @@
+ru:
+  web:
+    repositories:
+      name: Название
+      language: Язык
+      status: Статус
+      check_passed: Проверка пройдена
+      commit_id: ID коммита
+
+      index:
+        title: Репозитории
+        status: Статус последней проверки
+      show:
+        name: Название
+        language: Язык
+      new:
+        title: Добавить репозиторий
+      create:
+        success: Репозиторий добавлен
+
+      checks:
+        show:
+          title: "Проверка №%{id}"
+          errors_count: Кол-во замечаний
+          message: Сообщение
+          cop_name: Идентификатор правила
+          line_col: Строка и символ
+        create:
+          running: Проверка началась.

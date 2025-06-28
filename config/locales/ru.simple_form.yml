@@ -1,0 +1,13 @@
+ru:
+  simple_form:
+    "yes": 'ДА'
+    "no": 'Нет'
+    required:
+      text: 'обязательное'
+      mark: '*'
+    error_notification:
+      default_message: "Пожалуйста, исправьте ошибки:"
+  helpers:
+    submit:
+      repository:
+        create: Добавить
