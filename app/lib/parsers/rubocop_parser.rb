@@ -4,30 +4,40 @@ require 'json'
 
 module Parsers
   class RubocopParser
-    def self.run(result_json)
-      return {} if result_json.blank?
+    class << self
+      def run(result_json)
+        return {} if result_json.blank?
 
-      data = JSON.parse(result_json)
-      files = data['files'] || []
-      return {} if files.empty?
+        files_array(result_json).each_with_object({}) do |file, acc|
+          offenses = build_offenses(file['offenses'])
+          next if offenses.empty?
 
-      grouped = {}
-      files.each do |file|
-        file_name = file['path'].sub(%r{\Atmp/repos/[^/]+/[^/]+/}, '')
+          acc[relative_path(file['path'])] = offenses
+        end
+      end
 
-        offenses = file['offenses'].map do |offense|
-          loc = offense['location'] || {}
+      private
+
+      def files_array(json)
+        JSON.parse(json).fetch('files', [])
+      rescue JSON::ParserError
+        []
+      end
+
+      def build_offenses(offenses)
+        Array(offenses).map do |offense|
+          location = offense['location'] || {}
           {
             message: offense['message'],
             cop_name: offense['cop_name'],
-            line_col: "#{loc['line'] || loc['start_line']}:#{loc['column'] || loc['start_column']}"
+            line_col: "#{location['line'] || location['start_line']}:#{location['column'] || location['start_column']}"
           }
         end
-
-        grouped[file_name] = offenses unless offenses.empty?
       end
 
-      grouped
+      def relative_path(path)
+        path.to_s.sub(%r{\Atmp/repos/[^/]+/[^/]+/}, '')
+      end
     end
   end
 end
