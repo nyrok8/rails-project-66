@@ -8,7 +8,6 @@ class Web::RepositoriesController < Web::ApplicationController
   end
 
   def show
-    Rails.logger.info "=== current_user: #{current_user&.id.inspect} ==="
     @repository = Repository.find(params[:id])
     authorize @repository
 
