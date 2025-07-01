@@ -18,12 +18,12 @@ class LinterJob < ApplicationJob
         result: output
       )
       check.finish!
-      # unless passed
-      #   CheckMailer.failed_check(check).deliver_later
-      # end
+      unless passed
+        CheckMailer.failed_check(check).deliver_later
+      end
     else
       check.fail!
-      # CheckMailer.failed_check(check).deliver_later
+      CheckMailer.failed_check(check).deliver_later
     end
   end
 end
