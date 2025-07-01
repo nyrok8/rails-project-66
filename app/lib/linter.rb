@@ -2,8 +2,8 @@
 
 class Linter
   LINTERS = {
-    'Ruby' => ['rubocop', '--config', Rails.root.join('.rubocop.yml').to_s, '--format', 'json'],
-    'JavaScript' => ['npx', 'eslint', '--config', Rails.root.join('eslint.config.mjs').to_s, '--format', 'json']
+    'ruby' => ['rubocop', '--config', Rails.root.join('.rubocop.yml').to_s, '--format', 'json'],
+    'javascript' => ['npx', 'eslint', '--config', Rails.root.join('eslint.config.mjs').to_s, '--format', 'json']
   }.freeze
 
   def self.run(repo)

@@ -10,8 +10,11 @@ class GithubClient
   end
 
   def self.filtered_repos(client)
-    languages = Repository.language.values
-    client.repos.select { |repo| languages.include?(repo.language) }
+    supported = Repository.language.values
+    client.repos.select do |repo|
+      language = repo.language.to_s.downcase.strip
+      supported.include?(language)
+    end
   end
 
   def self.commit_id(client, repo_id)

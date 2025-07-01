@@ -3,8 +3,8 @@
 module Parsers
   class ParserResolver
     PARSERS = {
-      'Ruby' => RubocopParser,
-      'JavaScript' => EslintParser
+      'ruby' => RubocopParser,
+      'javascript' => EslintParser
     }.freeze
 
     def self.for(language)

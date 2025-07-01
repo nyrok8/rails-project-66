@@ -14,11 +14,11 @@ class RepoLoaderJob < ApplicationJob
     repository.update!(
       name: repo.name,
       full_name: repo.full_name,
-      language: repo.language,
+      language: repo.language.to_s.downcase.strip,
       clone_url: repo.clone_url,
       ssh_url: repo.ssh_url
     )
 
-    ApplicationContainer[:github].set_hook(client, repo.full_name)
+    # ApplicationContainer[:github].set_hook(client, repo.full_name)
   end
 end

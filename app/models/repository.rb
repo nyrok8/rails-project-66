@@ -9,5 +9,5 @@ class Repository < ApplicationRecord
 
   validates :github_id, presence: true, uniqueness: { scope: :user_id }
 
-  enumerize :language, in: %w[Ruby JavaScript]
+  enumerize :language, in: %w[ruby javascript]
 end
