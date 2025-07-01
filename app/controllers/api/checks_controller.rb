@@ -7,7 +7,6 @@ class Api::ChecksController < Api::ApplicationController
     event = request.headers['X-GitHub-Event']
 
     return head :ok if event == 'ping'
-    return head :unprocessable_entity unless event == 'push'
 
     repo_id = params[:repository][:id]
     commit_id = params[:after]
@@ -19,6 +18,6 @@ class Api::ChecksController < Api::ApplicationController
 
     LinterJob.perform_later(check.id)
 
-    head :created
+    head :ok
   end
 end
