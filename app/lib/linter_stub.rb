@@ -5,6 +5,6 @@ class LinterStub
     path = Rails.root.join('test/fixtures/files/linter_result.json')
     stdout = File.read(path)
 
-    [true, false, stdout]
+    [true, true, stdout]
   end
 end
