@@ -19,6 +19,6 @@ class RepoLoaderJob < ApplicationJob
       ssh_url: repo.ssh_url
     )
 
-    # ApplicationContainer[:github].set_hook(client, repo.full_name)
+    ApplicationContainer[:github].set_hook(client, repo.full_name)
   end
 end

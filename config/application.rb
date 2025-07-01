@@ -13,5 +13,7 @@ module RailsProject66
     config.autoload_lib(ignore: %w[assets tasks])
 
     config.i18n.default_locale = :ru
+
+    config.default_url_options = { host: ENV.fetch('BASE_URL', nil) }
   end
 end
