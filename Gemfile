@@ -20,6 +20,8 @@ gem 'octokit'
 gem 'omniauth-github'
 gem 'omniauth-rails_csrf_protection'
 
+gem 'mailtrap'
+
 gem 'dry-container'
 
 gem 'aasm'

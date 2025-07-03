@@ -141,6 +141,7 @@ GEM
       net-imap
       net-pop
       net-smtp
+    mailtrap (2.3.0)
     marcel (1.0.4)
     mini_mime (1.1.5)
     minitest (5.25.5)
@@ -388,6 +389,7 @@ DEPENDENCIES
   enumerize
   faker
   jsbundling-rails
+  mailtrap
   minitest-power_assert
   octokit
   omniauth-github

@@ -1,38 +1,50 @@
 # syntax=docker/dockerfile:1
 
 ARG RUBY_VERSION=3.2.2
-FROM ruby:$RUBY_VERSION-slim AS base
+FROM ruby:${RUBY_VERSION}-slim AS base
 
 ENV RAILS_ENV=production \
-    BUNDLE_DEPLOYMENT=1 \
+    APP_PATH=/app \
     BUNDLE_PATH=/usr/local/bundle \
-    BUNDLE_WITHOUT="development test"
+    BUNDLE_JOBS=4 \
+    BUNDLE_RETRY=3
 
-WORKDIR /rails
+WORKDIR ${APP_PATH}
 
-RUN apt-get update -qq && apt-get install --no-install-recommends -y \
-    curl libjemalloc2 libvips libpq5 \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    ca-certificates \
+    curl \
+    git \
+    libjemalloc2 \
+    libvips \
+    libpq5 && \
+    rm -rf /var/lib/apt/lists/*
 
 FROM base AS build
 
-RUN apt-get update -qq && apt-get install --no-install-recommends -y \
-    build-essential git node-gyp pkg-config python-is-python3 libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    pkg-config \
+    python-is-python3 \
+    libpq-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-ARG NODE_VERSION=23.9.0
+ARG NODE_VERSION=20.14.0
 ARG YARN_VERSION=1.22.22
-ENV PATH=/usr/local/node/bin:$PATH
+ENV PATH=/usr/local/node/bin:${PATH}
 
-RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
-    /tmp/node-build-master/bin/node-build "$NODE_VERSION" /usr/local/node && \
-    npm install -g yarn@$YARN_VERSION && \
-    rm -rf /tmp/node-build-master
+RUN curl -fsSL https://github.com/nodenv/node-build/archive/master.tar.gz | \
+    tar xz -C /tmp/ && \
+    /tmp/node-build-*/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    npm install -g yarn@${YARN_VERSION} && \
+    rm -rf /tmp/node-build-*
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
-    rm -rf ~/.bundle /usr/local/bundle/ruby/*/cache /usr/local/bundle/ruby/*/bundler/gems/*/.git && \
-    bundle exec bootsnap precompile --gemfile
+RUN bundle install --without "test" && \
+    bundle exec bootsnap precompile --gemfile && \
+    rm -rf /usr/local/bundle/cache
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
@@ -40,19 +52,24 @@ RUN yarn install --frozen-lockfile
 COPY . .
 
 RUN yarn build && yarn build:css && rm -rf node_modules
-RUN bundle exec bootsnap precompile app/ lib/
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+
+RUN gem install --no-document rubocop && \
+    npm install -g eslint
 
 FROM base
 
 COPY --from=build /usr/local/bundle /usr/local/bundle
-COPY --from=build /rails /rails
+COPY --from=build /usr/local/node /usr/local/node
+COPY --from=build ${APP_PATH} ${APP_PATH}
 
-RUN groupadd --system --gid 1000 rails && \
-    useradd --system --uid 1000 --gid 1000 --create-home --shell /bin/bash rails && \
-    chown -R rails:rails db log storage tmp
+ENV PATH=/usr/local/node/bin:${PATH}
+
+RUN groupadd -r rails --gid 1000 && \
+    useradd -r -g rails --uid 1000 --create-home --shell /bin/bash rails && \
+    chown -R rails:rails ${APP_PATH}
 USER 1000:1000
 
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 EXPOSE 3000
+ENTRYPOINT ["bin/docker-entrypoint"]
 CMD ["./bin/rails", "server"]
