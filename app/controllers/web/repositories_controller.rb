@@ -9,16 +9,14 @@ class Web::RepositoriesController < Web::ApplicationController
 
   def show
     @repository = Repository.find(params[:id])
-    authorize @repository
+    authorize @repository, :owner?
 
     @checks = @repository.checks.order(created_at: :desc)
   end
 
   def new
     @repository = Repository.new
-
-    client = ApplicationContainer[:github].client(current_user.token)
-    @repos = ApplicationContainer[:github].filtered_repos(client)
+    @repos = github.filtered_repos
   end
 
   def create
@@ -28,14 +26,14 @@ class Web::RepositoriesController < Web::ApplicationController
       RepoLoaderJob.perform_later(@repository.id)
       redirect_to repositories_path, notice: t('.success')
     else
-      client = ApplicationContainer[:github].client(current_user.token)
-      @repos = ApplicationContainer[:github].filtered_repos(client)
-
+      @repos = github.filtered_repos
       render :new, status: :unprocessable_entity
     end
   end
 
   private
+
+  def github = (@github ||= ApplicationContainer[:github].new(current_user.token))
 
   def repository_params
     params.require(:repository).permit(:github_id)

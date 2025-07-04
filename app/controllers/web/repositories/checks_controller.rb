@@ -5,7 +5,7 @@ class Web::Repositories::ChecksController < Web::Repositories::ApplicationContro
 
   def show
     @check = Repository::Check.find(params[:id])
-    authorize @check.repository
+    authorize @check.repository, :owner?
 
     parser = Parsers::ParserResolver.for(@check.repository.language)
     @parsed_result = parser.run(@check.result)
@@ -13,7 +13,7 @@ class Web::Repositories::ChecksController < Web::Repositories::ApplicationContro
 
   def create
     repository = Repository.find(params[:repository_id])
-    authorize repository
+    authorize repository, :owner?
 
     check = repository.checks.create!
 

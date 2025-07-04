@@ -36,7 +36,7 @@ module Parsers
       end
 
       def relative_path(path)
-        path.to_s.sub(%r{\Atmp/repos/[^/]+/[^/]+/}, '')
+        path.to_s.sub(%r{\A/tmp/repos/[^/]+/[^/]+/}, '')
       end
     end
   end

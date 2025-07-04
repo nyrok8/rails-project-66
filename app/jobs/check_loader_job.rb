@@ -5,14 +5,12 @@ class CheckLoaderJob < ApplicationJob
 
   def perform(check_id)
     check = Repository::Check.find_by(id: check_id)
-
     return unless check
 
-    repository = check.repository
+    repo = check.repository
+    github = ApplicationContainer[:github].new(repo.user.token)
+    commit = github.commit_id(repo.github_id)
 
-    client = ApplicationContainer[:github].client(repository.user.token)
-    commit_id = ApplicationContainer[:github].commit_id(client, repository.github_id)
-
-    check.update!(commit_id: commit_id)
+    check.update!(commit_id: commit)
   end
 end

@@ -6,7 +6,7 @@ class Web::AuthController < Web::ApplicationController
     user.nickname = auth.info.nickname
     user.token = auth.credentials.token
 
-    user.save!
+    user.save
 
     sign_in(user)
     redirect_to root_path, notice: t('.signed_in')

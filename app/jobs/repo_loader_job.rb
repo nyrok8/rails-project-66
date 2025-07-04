@@ -5,11 +5,10 @@ class RepoLoaderJob < ApplicationJob
 
   def perform(repo_id)
     repository = Repository.find_by(id: repo_id)
-
     return unless repository
 
-    client = ApplicationContainer[:github].client(repository.user.token)
-    repo = ApplicationContainer[:github].repo(client, repository.github_id)
+    github = ApplicationContainer[:github].new(repository.user.token)
+    repo = github.repo(repository.github_id)
 
     repository.update!(
       name: repo.name,
@@ -19,6 +18,6 @@ class RepoLoaderJob < ApplicationJob
       ssh_url: repo.ssh_url
     )
 
-    ApplicationContainer[:github].set_hook(client, repo.full_name)
+    github.create_hook(repo.full_name)
   end
 end

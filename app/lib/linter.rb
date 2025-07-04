@@ -11,7 +11,6 @@ class Linter
     FileUtils.mkdir_p(dir)
 
     repo_dir = dir.join(repo.full_name)
-    FileUtils.rm_rf(repo_dir)
 
     _, _, status = Open3.capture3('git', 'clone', repo.clone_url, repo_dir.to_s)
     return [false, nil, nil] unless status.success?
